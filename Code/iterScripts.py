@@ -127,10 +127,10 @@ def KKMTrainer(kcatPath, kmPath, TrainType, Iteration, closeInfer, log10, molTyp
     """Train setting."""
     train_pair_info, valid_pair_info, test_pair_info = get_pair_info("../Data/KKM/NewestFeature/")
     train_pair_info, valid_pair_info, test_pair_info = inference_distribute(train_pair_info, valid_pair_info, test_pair_info, [0.8,0.1,0.1], closeInfer)
-    train_set = ECFPDataSet(train_pair_info+valid_pair_info, '../Data/KKM/NewestFeature/esm1v_t33_650M_UR90S_1_embeding_1280/', '../Data/KKM/NewestFeature/index_smiles', 1024, 4, log10, molType)
-    valid_set = ECFPDataSet(test_pair_info, '../Data/KKM/NewestFeature/esm1v_t33_650M_UR90S_1_embeding_1280/', '../Data/KKM/NewestFeature/index_smiles', 1024, 4, log10, molType)
-    train_loader = GraphDataLoader(data=train_set, batch_size=200, shuffle=True, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
-    valid_loader = GraphDataLoader(data=valid_set, batch_size=200, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
+    train_set = CustomDataSet(train_pair_info+valid_pair_info, '../Data/KKM/NewestFeature/esm1v_t33_650M_UR90S_1_embeding_1280/', '../Data/KKM/NewestFeature/index_smiles', 1024, 4, log10, molType)
+    valid_set = CustomDataSet(test_pair_info, '../Data/KKM/NewestFeature/esm1v_t33_650M_UR90S_1_embeding_1280/', '../Data/KKM/NewestFeature/index_smiles', 1024, 4, log10, molType)
+    train_loader = CustomDataLoader(data=train_set, batch_size=200, shuffle=True, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
+    valid_loader = CustomDataLoader(data=valid_set, batch_size=200, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
     model = model.to(device)
     optimizer = torch.optim.AdamW([
                                    {'params': model.kcat.parameters(), 'lr':1e-4},
