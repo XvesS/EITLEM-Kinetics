@@ -94,7 +94,7 @@ class Trainer(object):
         else:
             testY = np.array(testY)
             testPredict = np.array(testPredict)
-        train_MAE = np.abs(testY - testPredict).sum() / N  # mean absolute error.
+        train_MAE = np.abs(testY - testPredict).sum() / N
         train_rmse = np.sqrt(mean_squared_error(testY, testPredict))
         train_r2 = r2_score(testY, testPredict)
         return train_MAE, train_rmse, train_r2, loss_train/N
@@ -251,12 +251,9 @@ def train(
     tester = Tester(device, loss_fn)
     trainer = Trainer(device, loss_fn)
     print("start to training...")
-    # 实例化tensorboard
     writer = SummaryWriter(f'../Results/{ModelType}/{train_info}/logs/')
     for epoch in range(1, Epoch + 1):
-        # 训练
         train_MAE, train_rmse, train_r2, loss_train = trainer.run(model, train_loader, optimizer, len(train_pair_info), f"epoch {epoch} train:")
-        # 验证
         MAE_dev, RMSE_dev, R2_dev, loss_dev = tester.test(model, valid_loader, len(valid_pair_info), desc=f"epoch {epoch} valid:")
         scheduler.step()
         writer.add_scalars("loss",{'train_loss':loss_train, 'dev_loss':loss_dev}, epoch)
@@ -264,68 +261,3 @@ def train(
         writer.add_scalars("MAE",{'train_MAE':train_MAE, 'dev_MAE':MAE_dev}, epoch)
         writer.add_scalars("R2",{'train_R2':train_r2, 'dev_R2':R2_dev}, epoch)
         tester.save_model(model, file_model+f'{molType}-trainR2:{train_r2:.4f}-devR2={R2_dev:.4f}-RMSE={RMSE_dev:.4f}-MAE={MAE_dev:.4f}-epoch={epoch}', R2_dev, epoch== Epoch)
-
-# def train_fold(
-#     Model,
-#     ModelType,
-#     args,
-#     lr,
-#     radius,
-#     setting,
-#     loss_fn,
-#     optim,
-#     schedule,
-#     schedule_args,
-#     batchsize,
-#     Epoch,
-#     train_info,
-#     embeding_path,
-#     smiles_path,
-#     device,
-#     source_path,
-#     dataset_split_func,
-#     split_args,
-#     fold,
-#     close_infer,
-#     molType
-# ):
-#     def getFoldPair(pair, fold):
-#         gap = len(pair) // 5
-#         return pair[:fold*gap]+pair[(fold+1)*gap:],pair[fold*gap:(fold+1)*gap]
-#     """Output files."""
-#     file_model = f'../Results/{ModelType}/{train_info}/model/'
-#     if not os.path.exists(file_model):
-#         os.makedirs(file_model)
-#     file_model += setting
-#     """Train setting."""
-#     train_pair_info, valid_pair_info, test_pair_info = dataset_split_func(**split_args)
-#     train_pair_info, valid_pair_info, test_pair_info = inference_distribute(train_pair_info, valid_pair_info, test_pair_info, [0.8,0.1,0.1], close_infer)
-#     train_pair_info, test_pair_info = getFoldPair(train_pair_info+valid_pair_info+test_pair_info, fold)
-#     if molType != 'Unimol':
-#         train_set = CustomDataSet(train_pair_info, embeding_path, smiles_path, args['mol_in_dim'], radius,Type=molType, log10=True)
-#         valid_set = CustomDataSet(test_pair_info, embeding_path, smiles_path, args['mol_in_dim'], radius, Type=molType, log10=True)
-#     else:
-#         train_set = ESMUniCustomDataset(train_pair_info, embeding_path, smiles_path, True)
-#         valid_set = ESMUniCustomDataset(test_pair_info, embeding_path, smiles_path, True)
-        
-#     train_loader = GraphDataLoader(data=train_set, batch_size=batchsize, shuffle=True, drop_last=False, num_workers=50, prefetch_factor=20, persistent_workers=True, pin_memory=True)
-#     valid_loader = GraphDataLoader(data=valid_set, batch_size=batchsize, drop_last=False, num_workers=50, prefetch_factor=10, persistent_workers=True, pin_memory=True)
-#     model = Model(**args).to(device)
-#     optimizer = optim(model.parameters(), lr=lr)
-#     scheduler = schedule(optimizer, **schedule_args)
-#     tester = Tester(device, loss_fn, log10=True)
-#     trainer = Trainer(device, loss_fn, log10=True)
-#     print("start to training...")
-#     # 实例化tensorboard
-#     writer = SummaryWriter(f'../Results/{ModelType}/{train_info}/logs/')
-#     for epoch in range(1, Epoch + 1):
-#         # 训练
-#         train_MAE, train_rmse, train_r2, loss_train = trainer.run(model, train_loader, optimizer, len(train_pair_info), f"epoch {epoch} train:")
-#         # 验证
-#         MAE_dev, RMSE_dev, R2_dev, loss_dev = tester.test(model, valid_loader, len(valid_pair_info), desc=f"epoch {epoch} valid:")
-#         scheduler.step()
-#         writer.add_scalars("loss",{'train_loss':loss_train, 'dev_loss':loss_dev}, epoch)
-#         writer.add_scalars("RMSE",{'train_RMSE':train_rmse, 'dev_RMSE':RMSE_dev}, epoch)
-#         writer.add_scalars("MAE",{'train_MAE':train_MAE, 'dev_MAE':MAE_dev}, epoch)
-#         writer.add_scalars("R2",{'train_R2':train_r2, 'dev_R2':R2_dev}, epoch)
-#         tester.save_model(model, file_model+f'{molType}-trainR2:{train_r2:.4f}-devR2={R2_dev:.4f}-RMSE={RMSE_dev:.4f}-MAE={MAE_dev:.4f}-epoch={epoch}', R2_dev, epoch== Epoch) # 保存
