@@ -1,6 +1,2 @@
-Data/all_kinetics_data.pt filter=lfs diff=lfs merge=lfs -text
-Data/brenda_2023_1.json filter=lfs diff=lfs merge=lfs -text
-./Data/all_kinetics_data.pt filter=lfs diff=lfs merge=lfs -text
-./Data/brenda_2023_1.json filter=lfs diff=lfs merge=lfs -text
 *.json filter=lfs diff=lfs merge=lfs -text
 *.pt filter=lfs diff=lfs merge=lfs -text
