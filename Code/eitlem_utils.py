@@ -89,16 +89,16 @@ class Trainer(object):
         return train_MAE, train_rmse, train_r2, loss_train/N
 
 def get_pair_info(dataset_path, Type, infer=True):
-    train_pair = torch.load(os.path.join(dataset_path, Type, f"{Type}TrainPairinfo"))
-    test_pair = torch.load(os.path.join(dataset_path, Type, f"{Type}TestPairinfo"))
+    train_pair = torch.load(os.path.join(dataset_path, Type, f"{Type}TrainPairInfo"))
+    test_pair = torch.load(os.path.join(dataset_path, Type, f"{Type}TestPairInfo"))
     if infer:
-        extra_info = torch.load(os.path.join(dataset_path, Type, f"{Type}ExtraPairinfo"))
+        extra_info = torch.load(os.path.join(dataset_path, Type, f"extraInfo"))
         train_pair.extend(extra_info[:int(0.9*len(extra_info))])
         test_pair.extend(extra_info[int(0.9*len(extra_info)):])
     return train_pair, test_pair
     
 def fold_test_split(dataset_path, Type, fold):
-    pair_info = torch.load(os.path.join(dataset_path, Type, f"{Type}TrainPairinfo")) + torch.load(os.path.join(dataset_path, Type, f"{Type}TestPairinfo"))
+    pair_info = torch.load(os.path.join(dataset_path, Type, f"{Type}TrainPairInfo")) + torch.load(os.path.join(dataset_path, Type, f"{Type}TestPairInfo"))
     n = len(pair_info) // 5
     test_set = pair_info[fold*n:(fold+1)*n]
     return pair_info[0:fold*n] + pair_info[(fold+1)*n:], test_set

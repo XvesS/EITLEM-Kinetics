@@ -26,22 +26,22 @@ It is recommended to use conda to create a virtual environment to run the code o
 Make sure to install pytorch with the cuda version that fits your device.
 ```bash
 git clone https://github.com/XvesS/EITLEM-Kinetics.git
-cd Eitlem-Kinetics
+cd EITLEM-Kinetics
 conda create -n eitlem_env python=3.8
 conda activate eitlem_env
-pip install numpy tqdm torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 fair-esm
+pip install numpy tqdm torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 fair-esm torch_geometric rdkit tensorboard
 ```
 
 ## Reproduce
 ### 1. Use the following code to generate protein feature
 ```bash
-cd Eitlem-Kinetics/Code
+cd EITLEM-Kinetics/Code
 python extract_protein.py
 ```
 
 ### 2.Train model from scratch
 ```bash
-cd Eitlem-Kinetics/Code
+cd EITLEM-Kinetics/Code
 python iter_train_scripts.py -i 8 -t iterativeTrain -m MACCSKeys -d 0
 ```
 Parameter definition in the script：
@@ -50,13 +50,13 @@ Parameter definition in the script：
 - `-m`: molecular fingerprint，optional: `MACCSKeys`, `ECFP`, `RDKIT`
 - `-d`: GPU device number, which will use the cpu to train the model if the GPU is not available 
 
-For other parameter definitions, see`./Code/iter_train_scripts.py`
+For other parameter definitions, see`./Code/iter_train_scripts.py`, and 
 
 ## Directly using Eitlem with trained weights.
 
 ### 1. Firstly, you can download all the weights files from **[here](https://drive.google.com/file/d/1ielYt8FwanX9GKGP-5rCV0F8H-NFckZ9/view?usp=drive_link)**
 
-Once the download is complete you will get a `Weights.zip`(11G), place it in the `Eitlem-Kinetics/` directory and unzip it
+Once the download is complete you will get a `Weights.zip`(11G), place it in the `EITLEM-Kinetics/` directory and unzip it
 
 ### 2. The following code can be used to predict the kinetic parameters of an enzyme.You need to prepare the amino acid sequence of the enzyme, as well as the SMILES format of the substrate.
 

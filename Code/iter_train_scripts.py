@@ -128,8 +128,8 @@ def KKMTrainer(kcatPath, kmPath, TrainType, Iteration, log10, molType, device):
     train_pair_info, test_pair_info = get_pair_info("../Data/", 'KKM')
     train_set = EitlemDataSet(train_pair_info, f'../Data/Feature/esm1v_t33_650M_UR90S_1_embeding_1280/', f'../Data/Feature/index_smiles', 1024, 4, log10, molType)
     test_set = EitlemDataSet(test_pair_info, f'../Data/Feature/esm1v_t33_650M_UR90S_1_embeding_1280/', f'../Data/Feature/index_smiles', 1024, 4, log10, molType)
-    train_loader = EitlemDataLoader(data=train_set, batch_size=200, shuffle=True, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
-    valid_loader = EitlemDataLoader(data=test_set, batch_size=200, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=False)
+    train_loader = EitlemDataLoader(data=train_set, batch_size=200, shuffle=True, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=True)
+    valid_loader = EitlemDataLoader(data=test_set, batch_size=200, drop_last=False, num_workers=60, prefetch_factor=10, persistent_workers=True, pin_memory=True)
     model = model.to(device)
     optimizer = torch.optim.AdamW([
                                    {'params': model.kcat.parameters(), 'lr':1e-4},
@@ -159,19 +159,19 @@ def getPath(Type, TrainType, Iteration):
     fileList = os.listdir(file_model)
     return os.path.join(file_model, fileList[0])
 
-def TransferLearing(Iterations, TrainType, closeInfer=False, log10=False, molType='ECFP', device=None):
+def TransferLearing(Iterations, TrainType, log10=False, molType='MACCSKeys', device=None):
     for iteration in range(1, Iterations + 1):
         if iteration == 1:
-            kineticsTrainer(None, TrainType, 'KCAT', iteration, closeInfer, log10, molType, device)
-            kineticsTrainer(None, TrainType, 'KM', iteration, closeInfer, log10, molType, device)
+            kineticsTrainer(None, TrainType, 'KCAT', iteration, log10, molType, device)
+            kineticsTrainer(None, TrainType, 'KM', iteration, log10, molType, device)
         else:
             kkmPath = getPath('KKM', TrainType, iteration-1)
-            kineticsTrainer(kkmPath, TrainType, 'KCAT', iteration, closeInfer, log10, molType, device)
-            kineticsTrainer(kkmPath, TrainType, 'KM', iteration, closeInfer, log10, molType, device)
+            kineticsTrainer(kkmPath, TrainType, 'KCAT', iteration, log10, molType, device)
+            kineticsTrainer(kkmPath, TrainType, 'KM', iteration, log10, molType, device)
         
         kcatPath = getPath('KCAT', TrainType, iteration)
         kmPath = getPath('KM', TrainType, iteration)
-        KKMTrainer(kcatPath, kmPath, TrainType, iteration, False, log10, molType, device)
+        KKMTrainer(kcatPath, kmPath, TrainType, iteration, log10, molType, device)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -191,4 +191,4 @@ if __name__ == '__main__':
     else:
         device = torch.device('cpu')
     print(f"used device {device}")
-    TransferLearing(args.Iteration, args.TrainType, args.closeInfer, args.log10, args.molType, device)
+    TransferLearing(args.Iteration, args.TrainType, args.log10, args.molType, device)
