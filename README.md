@@ -58,7 +58,7 @@ For other parameter definitions, see`./Code/iter_train_scripts.py`, and
 
 Once the download is complete you will get a `Weights.zip`(11G), place it in the `EITLEM-Kinetics/` directory and unzip it
 
-### 2. The following code can be used to predict the kinetic parameters of an enzyme.You need to prepare the amino acid sequence of the enzyme, as well as the SMILES format of the substrate.
+### 2. The code below demonstrates how to use a trained model to predict the kinetic parameters of an enzyme. You need to prepare the amino acid sequence of the enzyme and its corresponding substrate in SMILES format.
 
 ```python
 import torch
