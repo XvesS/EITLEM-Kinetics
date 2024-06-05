@@ -16,7 +16,7 @@ from torch import autocast
 import re
 import random
 scaler = GradScaler()
-    
+
 
 class Tester(object):
     def __init__(self, device, loss_fn, log10=False):

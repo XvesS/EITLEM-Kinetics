@@ -1,5 +1,4 @@
 import sys
-# sys.path.extend(["../../KCAT/scripts/", "../../KM/scripts/", "../../KKM/scripts/"])
 from dataset import EitlemDataSet, EitlemDataLoader
 from KMP import EitlemKmPredictor
 from ensemble import ensemble
