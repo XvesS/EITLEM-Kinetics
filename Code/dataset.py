@@ -8,27 +8,32 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit import Chem, RDLogger
 RDLogger.DisableLog('rdApp.*')
-# fpgen = AllChem.GetRDKitFPGenerator(fpSize=1024)
+fpgen = AllChem.GetRDKitFPGenerator(fpSize=1024)
+
+
 
 def generateData(mol, proteins, value, nbits, radius, Type):
     if Type == "ECFP":
         fp = AllChem.GetMorganFingerprintAsBitVect(mol, radius, nbits).ToList()
     elif Type == "MACCSKeys":
         fp = MACCSkeys.GenMACCSKeys(mol).ToList()
-    # elif Type == "RDKIT":
-    #     fp = fpgen.GetFingerprint(mol).ToList()
-    # elif Type == 'MACCSKeys_RDKIT':
-    #     fp1 = MACCSkeys.GenMACCSKeys(mol).ToList()
-    #     fp2 = fpgen.GetFingerprint(mol).ToList()
-    #     return Data(x = torch.FloatTensor(fp1).unsqueeze(0), y=torch.FloatTensor(fp2).unsqueeze(0), pro_emb=proteins, value=value)
+    elif Type == "RDKIT":
+        fp = fpgen.GetFingerprint(mol).ToList()
+    elif Type == 'MACCSKeys_RDKIT':
+        fp1 = MACCSkeys.GenMACCSKeys(mol).ToList()
+        fp2 = fpgen.GetFingerprint(mol).ToList()
+        return Data(x = torch.FloatTensor(fp1).unsqueeze(0), y=torch.FloatTensor(fp2).unsqueeze(0), pro_emb=proteins, value=value)
     data = Data(x = torch.FloatTensor(fp).unsqueeze(0), pro_emb=proteins, value=value)
     return data
     
 class EitlemDataSet(Dataset):
-    def __init__(self, Pairinfo, ProteinsPath, SmilesIndexPath, nbits, radius, log10=False, Type='ECFP'):
+    def __init__(self, Pairinfo, ProteinsPath, Smiles, nbits, radius, log10=False, Type='ECFP'):
         super(EitlemDataSet, self).__init__()
         self.pairinfo = Pairinfo
-        self.smiles = torch.load(SmilesIndexPath)
+        if isinstance(Smiles, str):
+            self.smiles = torch.load(Smiles)
+        elif isinstance(Smiles, dict):
+            self.smiles = Smiles
         self.seq_path = os.path.join(ProteinsPath, '{}.pt')
         self.nbits = nbits
         self.radius = radius
@@ -36,8 +41,8 @@ class EitlemDataSet(Dataset):
         self.Type = Type
         print(f"log10:{self.log10} molType:{self.Type}")
     def __getitem__(self, idx):
-        pro_id = int(self.pairinfo[idx][0])
-        smi_id = int(self.pairinfo[idx][1])
+        pro_id = self.pairinfo[idx][0]
+        smi_id = self.pairinfo[idx][1]
         value = self.pairinfo[idx][2]
         protein_emb = torch.load(self.seq_path.format(pro_id))
         mol = AllChem.MolFromSmiles(self.smiles[smi_id].strip())

@@ -5,13 +5,14 @@ from ensemble import ensemble
 from KCM import EitlemKcatPredictor
 from KKMP import EitlemKKmPredictor
 from tqdm import tqdm
+from Eitlem import Eitlem as Predictor
 import torch
  
 def predict(Type, modelPath, pairInfo, embedingPath, smilesPath, log10, device, molType):
     Dataset = EitlemDataSet(pairInfo, embedingPath, smilesPath, 1024, 4, log10, molType)
     Loader = EitlemDataLoader(data=Dataset, batch_size=100, shuffle=False, drop_last=False, num_workers=50, prefetch_factor=10, persistent_workers=False, pin_memory=False)
     if molType == 'MACCSKeys':
-        molDim = 167
+        molDim = 167 
     else:
         molDim = 1024
     if Type == 'KCAT':

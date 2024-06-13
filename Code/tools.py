@@ -22,7 +22,7 @@ from matplotlib import rc
 #         data[info[1]][info[-1]] = [ i.value for i in ea.scalars.Items(info[-1])]
 #     return data
     
-def metric(pre, target, log10):
+def metric(pre, target, log10=True):
     if not log10:
         testY = np.log10(np.power(2, target))
         testPredict = np.log10(np.power(2, pre))

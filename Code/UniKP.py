@@ -120,11 +120,14 @@ class UniKp_predictor():
             torch.save({'embeding':self.seqs_feature, 'mapping':self.seq_mapping}, f"../Weights/UniKP/{self.Type}_prot_t5_embeding.pt")
 
         x_train, y_train = self._load_dataset(train_pair_info, self.index_seq, self.index_smiles)
-        self.model = ExtraTreesRegressor()
+        self.model = ExtraTreesRegressor(n_jobs=128)
         self.model.fit(x_train, y_train)
         
     
-    def test(self, test_pair):  
+    def test(self, test_pair, ret=False):  
         x_test, y_test = self._load_dataset(test_pair, self.index_seq, self.index_smiles)
         y_pred = self.model.predict(x_test)
-        return metric(y_pred, y_test, True)
+        if not ret:
+            return metric(y_pred, y_test, True)
+        else:
+            return metric(y_pred, y_test, True), (y_pred, y_test)

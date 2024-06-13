@@ -20,7 +20,6 @@ def getScoreA(arg):
     j, searchSeq, seqIndex= arg
     q = seq.ProteinSequence(seqIndex[j])
     sim = []
-    searchSeq = list(searchSeq).sort()
     for i in searchSeq:
         alignments = align.align_optimal(q, seq.ProteinSequence(seqIndex[i]), matrix, local=False, gap_penalty=(-10, -0.5))
         t = align.get_sequence_identity(alignments[0])
@@ -168,9 +167,50 @@ def mol_smi(args):
         torch.save(result, "./molSimiResults")
 
 
+def all_dataset_similarity(Type):
+    query = torch.load(f"../Data/{Type}/{Type}TestPairInfo")
+    search = torch.load(f"../Data/{Type}/{Type}TrainPairInfo")
+    if Type != "KKM":
+        search += torch.load("../Data/KKM/KKMTrainPairInfo")
+    else:
+        search += torch.load("../Data/KCAT/KCATTrainPairInfo")
+        search += torch.load("../Data/KM/KMTrainPairInfo")
+    seqIndex = torch.load("../Data/Feature/index_seq")
+
+    seqIndex = {k:re.sub(r'[UZOB]', 'X', v) for k, v in seqIndex.items()}
+    pool = multiprocessing.Pool()
+    os.makedirs(f"./temp_seq_similarity", exist_ok=True)
+
+    query = set([ item[0] for item in query])
+    search = set([ item[0] for item in search])
+    query = query - search
+    query = list(query)
+    search = list(search)
+    print(f"{len(query)} query entrys \n {len(search)} search entrys")
+    params = [ (i, search, seqIndex) for i in query]
+    
+    pool.map(getScoreA, params)
+    pool.close()
+    pool.join()
+    
+    file_names = os.listdir("./temp_seq_similarity")
+    result = {}
+    for item in file_names:
+        sim_data = torch.load(os.path.join("./temp_seq_similarity",item))
+        result[int(item)] = sim_data
+    
+    result['index'] = search
+
+    torch.save(result, f"../Data/{Type}/all_seq_Indentity")
+    os.system("rm -rf ./temp_seq_similarity")
+
+
 if __name__ == '__main__':
     args = parse_args()
     if not args.mol:
         seq_smi(args)
     else:
         mol_smi(args)
+    # all_dataset_similarity('KCAT')
+    # all_dataset_similarity('KM')
+    # all_dataset_similarity('KKM')
