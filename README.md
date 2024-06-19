@@ -50,7 +50,7 @@ Parameter definition in the script：
 - `-m`: molecular fingerprint，optional: `MACCSKeys`, `ECFP`, `RDKIT`
 - `-d`: GPU device number, which will use the cpu to train the model if the GPU is not available 
 
-For other parameter definitions, see`./Code/iter_train_scripts.py`, and 
+For other parameter definitions, see`./Code/iter_train_scripts.py`
 
 ## Directly using Eitlem with trained weights.
 
