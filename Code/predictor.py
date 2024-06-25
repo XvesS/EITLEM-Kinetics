@@ -5,7 +5,6 @@ from ensemble import ensemble
 from KCM import EitlemKcatPredictor
 from KKMP import EitlemKKmPredictor
 from tqdm import tqdm
-from Eitlem import Eitlem as Predictor
 import torch
  
 def predict(Type, modelPath, pairInfo, embedingPath, smilesPath, log10, device, molType):

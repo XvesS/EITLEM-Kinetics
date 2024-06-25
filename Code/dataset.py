@@ -8,6 +8,7 @@ from rdkit.Chem import AllChem
 from rdkit.Chem import MACCSkeys
 from rdkit import Chem, RDLogger
 RDLogger.DisableLog('rdApp.*')
+### if an error occurs here, please check the version of rdkit 
 fpgen = AllChem.GetRDKitFPGenerator(fpSize=1024)
 
 
