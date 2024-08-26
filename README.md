@@ -83,7 +83,7 @@ model, alphabet = esm.pretrained.esm1v_t33_650M_UR90S_1()
 batch_converter = alphabet.get_batch_converter()
 model.eval()
 
-def predict(Type, sequence, smiles):
+def predict(kinetics_type, sequence, smiles):
     # Extratc protein representation
     data = [
     ("protein1", sequence),
@@ -102,14 +102,14 @@ def predict(Type, sequence, smiles):
 
     sample = Data(x = torch.FloatTensor(mol_feature).unsqueeze(0), pro_emb=sequence_representations[0])
     input_data = Batch.from_data_list([sample], follow_batch=['pro_emb'])
-    if Type == 'KCAT':
+    if kinetics_type == 'KCAT':
         eitlem = EitlemKcatPredictor(167, 512, 1280, 10, 0.5, 10)
-    elif Type == 'KM':
+    elif kinetics_type == 'KM':
         eitlem = EitlemKmPredictor(167, 512, 1280, 10, 0.5, 10)
     else:
         eitlem = ensemble(167, 512, 1280, 10, 0.5, 10)
     
-    eitlem.load_state_dict(torch.load(modelPath[Type]))
+    eitlem.load_state_dict(torch.load(modelPath[kinetics_type]))
     eitlem.eval()
     # Predict kinetics value.
     with torch.no_grad():
