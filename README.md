@@ -125,9 +125,6 @@ print(res) # 1.39
 
 ```
 
-## Analysis
-You can find Eitlem performance tests and comparisons to other models in the **`Eitlem-Kinetics/Notebook/analysis.ipynb`** file
-
 ## Cite Us
 
 ```bibtex

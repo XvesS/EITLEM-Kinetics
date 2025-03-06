@@ -4,8 +4,6 @@ import torch.nn.functional as F
 from torch_geometric.nn import global_add_pool
 from torch_geometric.utils import softmax
 from torch_geometric.utils import degree
-import numpy as np
-import math
 
 class Resnet(nn.Module):
     def __init__(self, in_dim, out_dim):

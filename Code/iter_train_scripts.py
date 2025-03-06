@@ -74,7 +74,7 @@ def kineticsTrainer(kkmPath, TrainType, Type, Iteration, log10, molType, device)
         rest_param = filter(lambda x:id(x) not in out_param, model.parameters())
         optimizer = torch.optim.AdamW([
                                        {'params': rest_param, 'lr':1e-4},
-                                       {'params':model.out.parameters(), 'lr':1e-3},
+                                       {'params':model.out.parameters(), 'lr':1e-3}, 
                                       ])
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer,step_size=10, gamma=0.8)
     else:
