@@ -85,7 +85,7 @@ def kineticsTrainer(kkmPath, TrainType, Type, Iteration, log10, molType, device)
     tester = Tester(device, loss_fn, log10=log10)
     trainer = Trainer(device, loss_fn, log10=log10)
     
-    print("start to training...")
+    print("start to train...")
     writer = SummaryWriter(f'../Results/{Type}/{train_info}/logs/')
     for epoch in range(1, Epoch + 1):
         train_MAE, train_rmse, train_r2, loss_train = trainer.run(model, train_loader, optimizer, len(train_pair_info), f"{Iteration}iter epoch {epoch} train:")
@@ -140,7 +140,7 @@ def KKMTrainer(kcatPath, kmPath, TrainType, Iteration, log10, molType, device):
     loss_fn = nn.MSELoss()
     tester = Tester(device, loss_fn, log10=log10)
     trainer = Trainer(device, loss_fn, log10=log10)
-    print("start to training...")
+    print("start to train...")
     writer = SummaryWriter(f'../Results/KKM/{train_info}/logs/')
     for epoch in range(1, Epoch + 1):
         train_MAE, train_rmse, train_r2, loss_train = trainer.run(model, train_loader, optimizer, len(train_set), f"{Iteration}iter epoch {epoch} train:")
@@ -190,5 +190,5 @@ if __name__ == '__main__':
         device = torch.device(f'cuda:{args.device}')
     else:
         device = torch.device('cpu')
-    print(f"used device {device}")
+    print(f"use device {device}")
     TransferLearing(args.Iteration, args.TrainType, args.log10, args.molType, device)
