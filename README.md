@@ -54,7 +54,7 @@ For other parameter definitions, see`./Code/iter_train_scripts.py`
 
 ## Directly using Eitlem with trained weights.
 
-### 1. Firstly, you can download all the weights files from **[here](https://drive.google.com/file/d/1ielYt8FwanX9GKGP-5rCV0F8H-NFckZ9/view?usp=drive_link)**
+### 1. Firstly, you can download all the weights files from **[here](https://doi.org/10.5281/zenodo.16153803)**
 
 Once the download is complete you will get a `Weights.zip`(11G), place it in the `EITLEM-Kinetics/` directory and unzip it
 
